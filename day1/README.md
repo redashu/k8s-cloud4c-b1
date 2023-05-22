@@ -4,4 +4,14 @@
 
 <img src="ws.png">
 
+### problem with VM 
+
+<img src="prob.png">
+
+### Introduction to containers 
+
+<img src="cont.png">
+
+
+
 
