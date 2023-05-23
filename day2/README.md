@@ -82,4 +82,56 @@ python       latest    815c8c75dfc0   2 weeks ago      920MB
 
 ```
 
+### creating first container of python code 
+
+```
+[test@ip-172-31-35-0 ~]$ docker images
+REPOSITORY   TAG       IMAGE ID       CREATED         SIZE
+ashu         pyv1      e41cd2bfd16b   5 minutes ago   920MB
+python       latest    815c8c75dfc0   2 weeks ago     920MB
+[test@ip-172-31-35-0 ~]$ 
+[test@ip-172-31-35-0 ~]$ 
+[test@ip-172-31-35-0 ~]$ docker  run  --name ashuc1  -itd   ashu:pyv1 
+adf58cecae0493bec97267b417e16d333b376ac85c646fec2355c17efe31d85f
+[test@ip-172-31-35-0 ~]$ docker  ps
+CONTAINER ID   IMAGE       COMMAND                  CREATED         STATUS         PORTS     NAMES
+adf58cecae04   ashu:pyv1   "python /code/ashu.py"   8 seconds ago   Up 7 seconds             ashuc1
+[test@ip-172-31-35-0 ~]$ 
+
+
+
+```
+
+### checking output 
+
+```
+[test@ip-172-31-35-0 ~]$ docker  logs  ashuc1 
+Hello all , welcome to python..!!
+Welcome to Cloud4C..
+Welcome to Containers ..!!
+______________________
+Hello all , welcome to python..!!
+Welcome to Cloud4C..
+
+```
+
+### checking resources 
+
+```
+[test@ip-172-31-35-0 ~]$ docker  stats  ashuc1 
+
+CONTAINER ID   NAME      CPU %     MEM USAGE / LIMIT     MEM %     NET I/O       BLOCK I/O   PIDS
+adf58cecae04   ashuc1    0.00%     3.836MiB / 15.61GiB   0.02%     1.07kB / 0B   0B / 0B     1
+^C
+
+```
+
+### stopping container manually 
+
+```
+test@ip-172-31-35-0 ~]$ docker  stop ashuc1
+ashuc1
+
+```
+
 
