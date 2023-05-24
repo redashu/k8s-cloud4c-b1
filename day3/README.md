@@ -105,3 +105,71 @@ ashujc1
 [ec2-user@ip-172-31-35-0 ashu-codes]$ docker rm ashujc1
 ashujc1
 ```
+
+### Understanding the use of docker registry named Docker hub 
+
+<img src="hub.png">
+
+### containerization of sample web app
+```
+[ec2-user@ip-172-31-35-0 ashu-codes]$ ls
+java  mysql  python
+[ec2-user@ip-172-31-35-0 ashu-codes]$ git clone  https://github.com/schoolofdevops/html-sample-app.git
+Cloning into 'html-sample-app'...
+remote: Enumerating objects: 74, done.
+remote: Counting objects: 100% (74/74), done.
+remote: Compressing objects: 100% (69/69), done.
+remote: Total 74 (delta 5), reused 72 (delta 5), pack-reused 0
+Receiving objects: 100% (74/74), 1.38 MiB | 2.24 MiB/s, done.
+Resolving deltas: 100% (5/5), done.
+[ec2-user@ip-172-31-35-0 ashu-codes]$ ls
+html-sample-app  java  mysql  python
+[ec2-user@ip-172-31-35-0 ashu-codes]$ 
+
+```
+### Understanding web server names
+
+<img src="ng1.png">
+
+### Dockerfile
+
+```
+FROM nginx 
+LABEL name=ashutoshh
+COPY .  /usr/share/nginx/html/
+# all the data to given location
+# but there is no need of Dockerfile , any text in source code of website
+# we use .dockerignore to avoid copy
+```
+
+### .dockerignore
+
+```
+Dockerfile
+.dockerignore
+*.txt
+.git
+```
+
+### lets build it 
+
+```
+[ec2-user@ip-172-31-35-0 ashu-codes]$ ls
+html-sample-app  java  mysql  python
+[ec2-user@ip-172-31-35-0 ashu-codes]$ docker build -t  ashuwebsite:v1  html-sample-app/
+Sending build context to Docker daemon  2.099MB
+Step 1/3 : FROM nginx
+latest: Pulling from library/nginx
+f03b40093957: Pulling fs layer 
+0972072e0e8a: Pulling fs 
+```
+
+### docker images 
+
+```
+ec2-user@ip-172-31-35-0 ashu-codes]$ docker  images
+REPOSITORY       TAG       IMAGE ID       CREATED             SIZE
+ashuwebsite      v1        58d297ac91bc   15 seconds ago      144MB
+```
+
+
