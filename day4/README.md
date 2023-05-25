@@ -167,6 +167,90 @@ PS C:\Users\hp\Downloads>
 
 <img src="apiserver.png">
 
+### kubernetes api-server connecting from client using kubectl 
 
+### auth file on control plane 
+```
+[root@ip-172-31-11-234 ~]# cd  /etc/kubernetes/
+[root@ip-172-31-11-234 kubernetes]# ls
+admin.conf
+```
+
+### kubectl client machine need this file to connect control plane
+
+```
+[ec2-user@ip-172-31-35-0 ashu-codes]$ mkdir  ~/.kube 
+[ec2-user@ip-172-31-35-0 ashu-codes]$ 
+[ec2-user@ip-172-31-35-0 ashu-codes]$ cd  ~/.kube/
+[ec2-user@ip-172-31-35-0 .kube]$ 
+[ec2-user@ip-172-31-35-0 .kube]$ wget  http://15.206.151.147/admin.conf 
+--2023-05-25 04:59:21--  http://15.206.151.147/admin.conf
+Connecting to 15.206.151.147:80... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 5637 (5.5K) [text/plain]
+Saving to: ‘admin.conf’
+
+100%[===================================================================>] 5,637       --.-K/s   in 0s      
+
+2023-05-25 04:59:21 (488 MB/s) - ‘admin.conf’ saved [5637/5637]
+
+[ec2-user@ip-172-31-35-0 .kube]$ ls
+admin.conf
+[ec2-user@ip-172-31-35-0 .kube]$ mv admin.conf  config 
+[ec2-user@ip-172-31-35-0 .kube]$ ls
+config
+[ec2-user@ip-172-31-35-0 .kube]$ 
+```
+### lets try some query to verify connection 
+
+```
+[ec2-user@ip-172-31-35-0 ashu-codes]$ kubectl   version -o yaml
+clientVersion:
+  buildDate: "2023-05-17T14:20:07Z"
+  compiler: gc
+  gitCommit: 7f6f68fdabc4df88cfea2dcf9a19b2b830f1e647
+  gitTreeState: clean
+  gitVersion: v1.27.2
+  goVersion: go1.20.4
+  major: "1"
+  minor: "27"
+  platform: linux/amd64
+kustomizeVersion: v5.0.1
+serverVersion:
+  buildDate: "2023-05-17T14:08:49Z"
+  compiler: gc
+  gitCommit: 890a139214b4de1f01543d15003b5bda71aae9c7
+  gitTreeState: clean
+  gitVersion: v1.26.5
+  goVersion: go1.19.9
+  major: "1"
+  minor: "26"
+  platform: linux/amd64
+```
+
+### 
+
+```
+[ec2-user@ip-172-31-35-0 ashu-codes]$ kubectl   cluster-info 
+Kubernetes control plane is running at https://172.31.11.234:6443
+CoreDNS is running at https://172.31.11.234:6443/api/v1/namespaces/kube-system/services/kube-dns:dns/proxy
+
+To further debug and diagnose cluster problems, use 'kubectl cluster-info dump'.
+[ec2-user@ip-172-31-35-0 ashu-codes]$ 
+
+```
+
+### checking number of nodes / system / server in k8s architecture 
+
+```
+[ec2-user@ip-172-31-35-0 ashu-codes]$ kubectl   get  nodes
+NAME                                           STATUS   ROLES           AGE    VERSION
+ip-172-31-0-78.ap-south-1.compute.internal     Ready    <none>          6d2h   v1.26.5
+ip-172-31-0-83.ap-south-1.compute.internal     Ready    <none>          6d2h   v1.26.5
+ip-172-31-11-234.ap-south-1.compute.internal   Ready    control-plane   6d2h   v1.26.5
+ip-172-31-4-184.ap-south-1.compute.internal    Ready    <none>          6d2h   v1.26.5
+ip-172-31-8-58.ap-south-1.compute.internal     Ready    <none>          6d2h   v1.26.5
+[ec2-user@ip-172-31-35-0 ashu-codes]$ 
+```
 
 
