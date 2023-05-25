@@ -253,4 +253,8 @@ ip-172-31-8-58.ap-south-1.compute.internal     Ready    <none>          6d2h   v
 [ec2-user@ip-172-31-35-0 ashu-codes]$ 
 ```
 
+### api-server and kubelet 
+
+<img src="kubelet.png">
+
 
