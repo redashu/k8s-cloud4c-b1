@@ -4,3 +4,7 @@
 
 <img src="rev.png">
 
+### Docker hub image storage understanding 
+
+<img src="dh.png">
+
