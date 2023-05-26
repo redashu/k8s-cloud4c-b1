@@ -125,5 +125,67 @@ gaurav-app-pod1     2/2     Running            0          9m16s
 gnanasai-app-pod1   2/2     Running            0          12m
 kush-app-pod1       1/2     ImagePullBackOff   0          14m
 ```
+### pushing new image of docker based to hub 
+
+```
+[ec2-user@ip-172-31-35-0 ashu-codes]$ ls
+html-sample-app  java  k8s-app-deployment  mysql  python
+[ec2-user@ip-172-31-35-0 ashu-codes]$ mkdir  java-webapp
+[ec2-user@ip-172-31-35-0 ashu-codes]$ cd java-webapp/
+[ec2-user@ip-172-31-35-0 java-webapp]$ ls
+[ec2-user@ip-172-31-35-0 java-webapp]$ Git clone https://github.com/redashu/javawebapp.git
+bash: Git: command not found
+[ec2-user@ip-172-31-35-0 java-webapp]$ git clone https://github.com/redashu/javawebapp.git
+Cloning into 'javawebapp'...
+remote: Enumerating objects: 86, done.
+remote: Counting objects: 100% (86/86), done.
+remote: Compressing objects: 100% (81/81), done.
+remote: Total 86 (delta 33), reused 7 (delta 0), pack-reused 0
+Receiving objects: 100% (86/86), 54.04 KiB | 4.91 MiB/s, done.
+Resolving deltas: 100% (33/33), done.
+[ec2-user@ip-172-31-35-0 java-webapp]$ ls
+javawebapp
+[ec2-user@ip-172-31-35-0 java-webapp]$ cd javawebapp/
+[ec2-user@ip-172-31-35-0 javawebapp]$ ls
+Dockerfile  myapp  README.md
+[ec2-user@ip-172-31-35-0 javawebapp]$ docker build -t docker.io/dockerashu/javaweb:v1 . 
+Sending build context to Docker daemon  160.8kB
+Step 1/6 : FROM tomcat
+ ---> c43980686364
+Step 2/6 : WORKDIR /usr/local/tomcat/webapps
+ ---> Using cache
+ ---> 4c8e6f93b8ab
+Step 3/6 : RUN mkdir oracle
+ ---> Using cache
+ ---> acb46542b170
+Step 4/6 : WORKDIR oracle
+ ---> Using cache
+ ---> 3ad613f5dfdf
+Step 5/6 : ADD myapp .
+ ---> Using cache
+ ---> 1c56128620e3
+Step 6/6 : EXPOSE 8080
+ ---> Using cache
+ ---> 069238cdb182
+Successfully built 069238cdb182
+Successfully tagged dockerashu/javaweb:v1
+[ec2-user@ip-172-31-35-0 javawebapp]$ docker login 
+Login with your Docker ID to push and pull images from Docker Hub. If you don't have a Docker ID, head over to https://hub.docker.com to create one.
+Username: dockerashu
+Password: 
+WARNING! Your password will be stored unencrypted in /home/ec2-user/.docker/config.json.
+Configure a credential helper to remove this warning. See
+https://docs.docker.com/engine/reference/commandline/login/#credentials-store
+
+Login Succeeded
+[ec2-user@ip-172-31-35-0 javawebapp]$ docker push docker.io/dockerashu/javaweb:v1
+The push refers to repository [docker.io/dockerashu/javaweb]
+d8ffac3f13df: Mounted from sekhar1122/cloud42capp 
+4de143299fd8: Mounted from sekhar1122/cloud42capp 
+ff2f1ac35e82: Mounted from sekhar1122/cloud42capp 
+90467836af65: Mounted from sekhar1122/cloud42capp 
+74d620724878: Mounted from sekhar1122/cloud42capp 
+```
+
 
 
