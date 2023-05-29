@@ -245,4 +245,70 @@ boot  docker-entrypoint.d  etc                   home  lib64  mnt    proc  run  
 root@ashuwebpod:/# exit
 exit
 ```
+### completing task
+
+### yaml of pod 
+
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    run: ashuwebapp
+  name: ashuwebapp # name of pod 
+  namespace: tasks #  defining namespace info here 
+spec:
+  nodeName: ip-172-31-0-83.ap-south-1.compute.internal # static scheduling 
+  containers:
+  - image: httpd
+    name: ashuwebapp
+    ports:
+    - containerPort: 80
+    resources: {}
+  dnsPolicy: ClusterFirst
+  restartPolicy: Always
+status: {}
+
+```
+
+### perform 
+
+```
+107  kubectl create -f task1.yaml 
+  108  kubectl  get  po 
+  109  kubectl  get  po  -n tasks 
+  110  kubectl  get  po -o wide  -n tasks 
+  111  kubectl  logs  ashuwebapp  -n tasks
+  112  kubectl  logs  ashuwebapp  -n tasks  >logs.txt  
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ kubectl  logs  ashuwebapp  -n tasks
+AH00558: httpd: Could not reliably determine the server's fully qualified domain name, using 192.168.172.229. Set the 'ServerName' directive globally to suppress this message
+AH00558: httpd: Could not reliably determine the server's fully qualified domain name, using 192.168.172.229. Set the 'ServerName' directive globally to suppress this message
+[Mon May 29 05:28:11.879271 2023] [mpm_event:notice] [pid 1:tid 140085111364928] AH00489: Apache/2.4.57 (Unix) configured -- resuming normal operations
+[Mon May 29 05:28:11.879443 2023] [core:notice] [pid 1:tid 140085111364928] AH00094: Command line: 'httpd -D FOREGROUND'
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ kubectl  logs  ashuwebapp  -n tasks  >logs.txt 
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ ls
+ashupod_auto.yaml  ashupod.json  ashu-webapp-pod.yaml  logs.txt  task1.yaml
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ kubectl  get po -n tasks
+NAME            READY   STATUS    RESTARTS   AGE
+ashuwebapp      1/1     Running   0          78s
+gauravwebpod    1/1     Running   0          33s
+shreyaswebapp   1/1     Running   0          6m21s
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ kubectl  exec -it  ashuwebapp  -- bash -n tasks
+Error from server (NotFound): pods "ashuwebapp" not found
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ kubectl  -n tasks exec -it ashuwebapp -- bash 
+root@ashuwebapp:/usr/local/apache2# cd  /
+root@ashuwebapp:/# ls
+bin  boot  dev  etc  home  lib  lib64  media  mnt  opt  proc  root  run  sbin  srv  sys  tmp  usr  var
+root@ashuwebapp:/# mkdir /oracle
+root@ashuwebapp:/# exit
+exit
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ kubectl  -n tasks cp logs.txt   ashuwebapp:/oracle/
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ kubectl  -n tasks exec -it ashuwebapp -- bash 
+root@ashuwebapp:/usr/local/apache2# cd /oracle/
+root@ashuwebapp:/oracle# ls
+logs.txt
+root@ashuwebapp:/oracle# exit
+exit
+```
 
