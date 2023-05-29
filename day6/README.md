@@ -162,4 +162,87 @@ No resources found in ashu-app namespace.
 
 ```
 
+## NEtworking in k8s 
+
+### LEvel of networking 
+
+<img src="level.png">
+
+### read firewall rules for k8s cluster 
+
+[click_here](https://kubernetes.io/docs/reference/networking/ports-and-protocols/)
+
+### Container networking modesl -- CNI will be used by k8s 
+
+<img src="cni.png">
+
+### Distributed Bridge networking by CNI on k8s minion nodes -- to assign ip address for pods 
+
+<img src="podnet.png">
+
+
+### we are using project calico to implement CNI in k8s  but there are many other project  / plugins we are having
+
+### list is here 
+
+[click_here](https://github.com/containernetworking/cni)
+
+
+### we are getting response from other node pod 
+
+```
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ kubectl   exec  -it  ashuwebpod  -- bash 
+root@ashuwebpod:/# 
+root@ashuwebpod:/# curl http://192.168.246.155
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>devops</title>
+</head>
+<body>
+    <h1>Hello world , Welcome to Devops , CLoud & SRE </h1>
+    
+ <div class="wrapper">
+    <div class="box box1"><img src="dev.jpg" alt="a balloon"></div>
+    <div class="box box2"><img src="dev.jpg" alt="a balloon"></div>
+    <div class="box box3"><img src="dev.jpg" alt="a balloon"></div>
+</div> 
+    
+</body>
+</html>
+```
+
+### exploring pod container internals 
+
+```
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ kubectl   exec  -it  ashuwebpod  -- bash 
+root@ashuwebpod:/# ls
+bin  boot  dev  docker-entrypoint.d  docker-entrypoint.sh  etc  home  lib  lib64  media  mnt  opt  proc  root  run  sbin  srv  sys  tmp  usr  var
+root@ashuwebpod:/# 
+root@ashuwebpod:/# 
+root@ashuwebpod:/# uname -r
+5.10.178-162.673.amzn2.x86_64
+root@ashuwebpod:/# cat  /etc/os-release 
+PRETTY_NAME="Debian GNU/Linux 11 (bullseye)"
+NAME="Debian GNU/Linux"
+VERSION_ID="11"
+VERSION="11 (bullseye)"
+VERSION_CODENAME=bullseye
+ID=debian
+HOME_URL="https://www.debian.org/"
+SUPPORT_URL="https://www.debian.org/support"
+BUG_REPORT_URL="https://bugs.debian.org/"
+root@ashuwebpod:/# 
+root@ashuwebpod:/# ls
+bin  boot  dev  docker-entrypoint.d  docker-entrypoint.sh  etc  home  lib  lib64  media  mnt  opt  proc  root  run  sbin  srv  sys  tmp  usr  var
+root@ashuwebpod:/# mkdir helk
+root@ashuwebpod:/# ls
+bin   dev                  docker-entrypoint.sh  helk  lib    media  opt   root  sbin  sys  usr
+boot  docker-entrypoint.d  etc                   home  lib64  mnt    proc  run   srv   tmp  var
+root@ashuwebpod:/# exit
+exit
+```
 
