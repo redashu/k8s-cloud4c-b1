@@ -149,5 +149,26 @@ NAME      TYPE       CLUSTER-IP      EXTERNAL-IP   PORT(S)        AGE
 ashulb1   NodePort   10.104.71.123   <none>        80:30929/TCP   12s
 [ec2-user@ip-172-31-35-0 k8s-app-deployment]$ 
 ```
+### deleting pod and svc
+
+```
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ kubectl  get  po
+NAME      READY   STATUS    RESTARTS   AGE
+ashu-ui   1/1     Running   0          67m
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ 
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ kubectl  delete pod ashu-ui 
+pod "ashu-ui" deleted
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ 
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ kubectl  get  svc
+NAME      TYPE       CLUSTER-IP      EXTERNAL-IP   PORT(S)        AGE
+ashulb1   NodePort   10.104.71.123   <none>        80:30929/TCP   9m29s
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ 
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ kubectl  delete svc  ashulb1 
+service "ashulb1" deleted
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ 
+
+
+```
+
 
 
