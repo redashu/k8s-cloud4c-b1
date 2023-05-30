@@ -110,3 +110,44 @@ secrets                                        v1                               
 serviceaccounts                   sa           v1                                     true         ServiceAccount
 services                          svc          v1                                     true         Service
 ```
+
+## Introduction to service for creating load balancer internal to k8s 
+
+### type of service in k8s 
+
+<img src="stype.png">
+
+### Exploring Nodeport service in k8s which is exposing pod app to external world 
+
+<img src="np.png">
+
+### creating service yaml from a running pod 
+
+```
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ kubectl  get  pods
+NAME      READY   STATUS    RESTARTS   AGE
+ashu-ui   1/1     Running   0          52m
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ 
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ kubectl  expose  pod  ashu-ui  --type NodePort  --port 80 --name ashulb1 --dry-run=client -o yaml       >nodeport.yaml 
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ ls
+ashupod_auto.yaml  ashupod.json  ashu-webapp-pod.yaml  logs.txt  nodeport.yaml  task1.yaml  uipod.yaml
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ 
+
+```
+
+### deploy service 
+
+```
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ kubectl  create  -f nodeport.yaml 
+service/ashulb1 created
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ kubectl  get  service
+NAME      TYPE       CLUSTER-IP      EXTERNAL-IP   PORT(S)        AGE
+ashulb1   NodePort   10.104.71.123   <none>        80:30929/TCP   8s
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ 
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ kubectl  get  svc
+NAME      TYPE       CLUSTER-IP      EXTERNAL-IP   PORT(S)        AGE
+ashulb1   NodePort   10.104.71.123   <none>        80:30929/TCP   12s
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ 
+```
+
+
