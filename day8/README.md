@@ -184,6 +184,50 @@ lb1    NodePort   10.103.242.67   <none>        80:31671/TCP   4s
 [ec2-user@ip-172-31-35-0 k8s-app-deployment]$ 
 ```
 
+### mytask 
 
+```
+apiVersion: v1
+kind: Namespace
+metadata:
+  creationTimestamp: null
+  name: ashuk8s1
+spec: {}
+status: {}
+
+---
+
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    run: ashupod1
+  name: ashupod1
+  namespace: ashuk8s1 # namespace entry 
+spec:
+  containers:
+  - image: docker.io/dockerashu/banasthali:appv1
+    name: ashupod1
+    ports:
+    - containerPort: 80
+    resources: {}
+  dnsPolicy: ClusterFirst
+  restartPolicy: Always
+status: {}
+```
+
+### deploy it 
+
+```
+
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ kubectl create -f  mytask.yaml 
+namespace/ashuk8s1 created
+pod/ashupod1 created
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ kubectl  get  po -n ashuk8s1
+NAME       READY   STATUS    RESTARTS   AGE
+ashupod1   1/1     Running   0          13s
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ 
+```
 
 
