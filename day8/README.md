@@ -68,5 +68,64 @@ mylb1   NodePort   10.110.113.207   <none>        80:30499/TCP   4s
 [ec2-user@ip-172-31-35-0 k8s-app-deployment]$ 
 ```
 
+### Understandign controller in k8s 
+
+<img src="contr.png">
+
+### Understanding replication controller in k8s 
+
+<img src="rc.png">
+
+### cleaning namespace 
+
+```
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ kubectl  get  all
+NAME               READY   STATUS    RESTARTS   AGE
+pod/ashu-webapp2   1/1     Running   0          26m
+
+NAME            TYPE       CLUSTER-IP       EXTERNAL-IP   PORT(S)        AGE
+service/mylb1   NodePort   10.110.113.207   <none>        80:30499/TCP   33m
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ kubectl  delete all --all
+pod "ashu-webapp2" deleted
+service "mylb1" deleted
+
+```
+
+### create Replication controller
+
+ashu-app-rc.yaml 
+
+```
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: ashu-webapp-rc # name of rc
+  namespace: ashu-app # name of namespace (optional field)
+spec:
+  replicas: 1 # number of pod we want to create 
+  template: # pod info 
+   metadata:
+    labels:
+      app: ashu1 
+   spec:
+    containers:
+    - name: ashuc1
+      image: docker.io/dockerashu/banasthali:appv1
+      ports:
+      - containerPort: 80
+```
+### creating rc 
+
+```
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ kubectl create -f ashu-rc.yaml 
+replicationcontroller/ashu-webapp-rc created
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ kubectl  get  rc 
+NAME             DESIRED   CURRENT   READY   AGE
+ashu-webapp-rc   1         1         1       5s
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ kubectl  get  pods
+NAME                   READY   STATUS    RESTARTS   AGE
+ashu-webapp-rc-7rh9b   1/1     Running   0          12s
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ 
 
 
+```
