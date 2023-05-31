@@ -129,3 +129,61 @@ ashu-webapp-rc-7rh9b   1/1     Running   0          12s
 
 
 ```
+
+### recreation of pod 
+
+```
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ kubectl  get  pods
+NAME                   READY   STATUS    RESTARTS   AGE
+ashu-webapp-rc-7rh9b   1/1     Running   0          7m46s
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ kubectl  get  pods -o wide
+NAME                   READY   STATUS    RESTARTS   AGE     IP                NODE                                          NOMINATED NODE   READINESS GATES
+ashu-webapp-rc-7rh9b   1/1     Running   0          7m50s   192.168.246.178   ip-172-31-4-184.ap-south-1.compute.internal   <none>           <none>
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ 
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ kubectl  delete pod  ashu-webapp-rc-7rh9b
+pod "ashu-webapp-rc-7rh9b" deleted
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ kubectl  get  pods -o wide
+NAME                   READY   STATUS    RESTARTS   AGE   IP                NODE                                         NOMINATED NODE   READINESS GATES
+ashu-webapp-rc-nltx6   1/1     Running   0          10s   192.168.243.215   ip-172-31-8-58.ap-south-1.compute.internal   <none>           <none>
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ 
+```
+### manual horizental scaling 
+
+```
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ kubectl  get  rc
+NAME             DESIRED   CURRENT   READY   AGE
+ashu-webapp-rc   1         1         1       9m48s
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ 
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ kubectl  scale  rc  ashu-webapp-rc  --replicas=3
+replicationcontroller/ashu-webapp-rc scaled
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ 
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ kubectl  get  rc
+NAME             DESIRED   CURRENT   READY   AGE
+ashu-webapp-rc   3         3         3       10m
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ kubectl  get  po -o wide
+NAME                   READY   STATUS    RESTARTS   AGE     IP                NODE                                          NOMINATED NODE   READINESS GATES
+ashu-webapp-rc-ghr8d   1/1     Running   0          13s     192.168.246.183   ip-172-31-4-184.ap-south-1.compute.internal   <none>           <none>
+ashu-webapp-rc-nltx6   1/1     Running   0          2m13s   192.168.243.215   ip-172-31-8-58.ap-south-1.compute.internal    <none>           <none>
+ashu-webapp-rc-z7tr6   1/1     Running   0          13s     192.168.221.162   ip-172-31-0-78.ap-south-1.compute.internal    <none>           <none>
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ 
+
+```
+
+### creating service by exposing RC 
+
+```
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ kubectl  get  rc
+NAME             DESIRED   CURRENT   READY   AGE
+ashu-webapp-rc   1         1         1       17m
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ kubectl   expose  rc  ashu-webapp-rc  --type NodePort --port 80 --name lb1  --dry-run=client -o yaml >svcbyrc.yaml 
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ kubectl create -f svcbyrc.yaml 
+service/lb1 created
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ kubectl  get  svc
+NAME   TYPE       CLUSTER-IP      EXTERNAL-IP   PORT(S)        AGE
+lb1    NodePort   10.103.242.67   <none>        80:31671/TCP   4s
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ 
+```
+
+
+
+
