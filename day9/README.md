@@ -166,3 +166,91 @@ ashu-secure-app   1/1     Running   0          21s   192.168.246.148   ip-172-31
 
 ```
 
+### Revision of secret usage
+
+<img src="sec1.png">
+
+### Introduction to deployment controller 
+
+<img src="dep.png">
+
+### Internals of deployment 
+
+<img src="internal.png">
+
+### cleaning up 
+
+```
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ kubectl  get  po 
+NAME              READY   STATUS    RESTARTS   AGE
+ashu-secure-app   1/1     Running   0          32m
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ kubectl  get  secret
+NAME              TYPE                             DATA   AGE
+ashu-reg-secret   kubernetes.io/dockerconfigjson   1      37m
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ 
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ kubectl  delete  pod,secret --all
+pod "ashu-secure-app" deleted
+secret "ashu-reg-secret" deleted
+```
+
+### creating deployment yaml 
+
+```
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ kubectl  create  deployment ashu-deployment --image=docker.io/dockerashu/banasthali:appv1  --port 80 --dry-run=client -o yaml >deployment1.yaml 
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ 
+```
+
+### creating and testing recreation of pod 
+
+```
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ kubectl create -f deployment1.yaml 
+deployment.apps/ashu-deployment created
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ 
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ kubectl  get  deployment 
+NAME              READY   UP-TO-DATE   AVAILABLE   AGE
+ashu-deployment   1/1     1            1           6s
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ kubectl  get  rs
+NAME                         DESIRED   CURRENT   READY   AGE
+ashu-deployment-65c487b56d   1         1         1       10s
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ kubectl  get  pods
+NAME                               READY   STATUS    RESTARTS   AGE
+ashu-deployment-65c487b56d-tr89p   1/1     Running   0          15s
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ kubectl delete pod ashu-deployment-65c487b56d-tr89p
+pod "ashu-deployment-65c487b56d-tr89p" deleted
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ kubectl  get  pods
+NAME                               READY   STATUS    RESTARTS   AGE
+ashu-deployment-65c487b56d-z8sqj   1/1     Running   0          3s
+```
+### scaling pod using yaml or scale command 
+
+```
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ kubectl  scale deployment  ashu-deployment --replicas=4
+deployment.apps/ashu-deployment scaled
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ kubectl  get deployment 
+NAME              READY   UP-TO-DATE   AVAILABLE   AGE
+ashu-deployment   4/4     4            4           7m43s
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ kubectl   get  pods
+NAME                               READY   STATUS    RESTARTS   AGE
+ashu-deployment-65c487b56d-hxrsj   1/1     Running   0          7s
+ashu-deployment-65c487b56d-sg7r7   1/1     Running   0          7s
+ashu-deployment-65c487b56d-xkn9h   1/1     Running   0          7s
+ashu-deployment-65c487b56d-z8sqj   1/1     Running   0          7m23s
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ kubectl  scale deployment  ashu-deployment --replicas=2
+deployment.apps/ashu-deployment scaled
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ kubectl   get  pods
+NAME                               READY   STATUS    RESTARTS   AGE
+ashu-deployment-65c487b56d-hxrsj   1/1     Running   0          13s
+ashu-deployment-65c487b56d-z8sqj   1/1     Running   0          7m29s
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ kubectl  scale deployment  ashu-deployment --replicas=0
+deployment.apps/ashu-deployment scaled
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ kubectl  get deployment 
+NAME              READY   UP-TO-DATE   AVAILABLE   AGE
+ashu-deployment   0/0     0            0           8m1s
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ 
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ kubectl   get  pods
+No resources found in ashu-app namespace.
+```
+
+
+
+
