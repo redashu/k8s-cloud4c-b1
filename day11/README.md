@@ -149,3 +149,41 @@ clusterrolebinding.rbac.authorization.k8s.io/power created
 [ec2-user@ip-172-31-35-0 ashu-codes]$ 
 ```
 
+### adding DNS and External Loadbalancer outside k8s scope we will plan this seperately 
+
+<img src="plan.png">
+
+## showing over demo 
+
+### i have domain name from Godaddy -- ashutoshh.in 
+
+### deploy app in k8s 
+
+```
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ kubectl  create  deploy  ashu-final --image=dockerashu/ashuwebsite:v1
+deployment.apps/ashu-final created
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ kubectl  get deploy 
+NAME         READY   UP-TO-DATE   AVAILABLE   AGE
+ashu-final   1/1     1            1           5s
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ kubectl  scale deploy ashu-final --replicas=3
+deployment.apps/ashu-final scaled
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ 
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ kubectl  get deploy 
+NAME         READY   UP-TO-DATE   AVAILABLE   AGE
+ashu-final   2/3     3            2           18s
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ kubectl  expose deploy ashu-final --type NodePort --port 80 --name lb008
+service/lb008 exposed
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ kubectl  get  svc
+NAME    TYPE       CLUSTER-IP      EXTERNAL-IP   PORT(S)        AGE
+lb008   NodePort   10.105.72.121   <none>        80:31028/TCP   4s
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ 
+```
+
+### now we get 31028 port on our nodes --
+
+### planning external Loadbalancer now
+
+
+
+
+
