@@ -35,3 +35,30 @@ ashu-java-webapp-cf7d84459-fm8x6   1/1     Running   0          13s
 
 ```
 
+### understanding ClusterIP service in k8s 
+
+<img src="clip.png">
+
+### selection  of service type with and without ingress controller
+
+<img src="svc1.png">
+
+### creating cluster IP type service using expose 
+
+```
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ kubectl  get deploy 
+NAME               READY   UP-TO-DATE   AVAILABLE   AGE
+ashu-java-webapp   1/1     1            1           13m
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ 
+
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ kubectl  expose  deploy ashu-java-webapp --type ClusterIP --port 8080 --name as
+hulb67  --dry-run=client -o yaml  >javaclusteripsvc.yaml 
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ kubectl  apply -f javaclusteripsvc.yaml 
+service/ashulb67 created
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ kubectl  get  svc
+NAME       TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)    AGE
+ashulb67   ClusterIP   10.102.102.164   <none>        8080/TCP   4s
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ 
+
+```
+
