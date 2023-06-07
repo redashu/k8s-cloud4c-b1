@@ -196,5 +196,62 @@ deployment.apps/ashu-app-testing rolled back
 deployment "ashu-app-testing" successfully rolled out
 ```
 
+### to make service avaiable we can do check at k8s level -- REadinessProbe 
+
+<img src="ready.png">
+
+### configure ReadinessProbe
+
+```
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: ashu-app-testing
+  name: ashu-app-testing
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ashu-app-testing
+  strategy: {} # by default k8s is considering RAMPED (rolling updates)
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: ashu-app-testing
+    spec:
+      containers:
+      - image: docker.io/dockerashu/cloud4cweb:appv3 
+        name: cloud4cweb # name of container 
+        ports:
+        - containerPort: 80
+        resources: {}
+        readinessProbe: # for testing webpage locally which is done by kubelet
+          periodSeconds: 5 # every 5 second check 
+          initialDelaySeconds: 2 # this is only for the first time when pod is getting created
+          httpGet: # by sending http request by kubelet 
+           path: /health.html 
+           port: 80 
+status: {}
+
+```
+
+### apply changes 
+
+```
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ kubectl  apply -f newapp.yaml 
+deployment.apps/ashu-app-testing configured
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ kubectl  get po
+NAME                                READY   STATUS              RESTARTS   AGE
+ashu-app-testing-58dc4c759b-t2zxz   0/1     ContainerCreating   0          4s
+ashu-app-testing-59bb54d79f-d9h7h   1/1     Running             0          33m
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ kubectl  get po
+NAME                                READY   STATUS    RESTARTS   AGE
+ashu-app-testing-58dc4c759b-t2zxz   1/1     Running   0          44s
+```
+
+
 
 
