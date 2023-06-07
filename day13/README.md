@@ -80,6 +80,79 @@ ashu-app-testing-59bb54d79f-kkpz9   1/1     Running   0          11s
 [ec2-user@ip-172-31-35-0 k8s-app-deployment]$ 
 ```
 
+### verify strategy 
 
+```
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ kubectl  get  deploy 
+NAME               READY   UP-TO-DATE   AVAILABLE   AGE
+ashu-app-testing   1/1     1            1           4m30s
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ kubectl  describe deploy  ashu-app-testing  
+Name:                   ashu-app-testing
+Namespace:              ashu-app
+CreationTimestamp:      Wed, 07 Jun 2023 04:16:15 +0000
+Labels:                 app=ashu-app-testing
+Annotations:            deployment.kubernetes.io/revision: 1
+Selector:               app=ashu-app-testing
+Replicas:               1 desired | 1 updated | 1 total | 1 available | 0 unavailable
+StrategyType:           RollingUpdate
+MinReadySeconds:        0
+```
+
+### scaling horizentally pods 
+
+```
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ kubectl  get deploy 
+NAME               READY   UP-TO-DATE   AVAILABLE   AGE
+ashu-app-testing   1/1     1            1           6m40s
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ kubectl  scale deployment  ashu-app-testing  --replicas=3
+deployment.apps/ashu-app-testing scaled
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ kubectl  get deploy 
+NAME               READY   UP-TO-DATE   AVAILABLE   AGE
+ashu-app-testing   2/3     3            2           6m59s
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ kubectl  get po
+NAME                                READY   STATUS    RESTARTS   AGE
+ashu-app-testing-59bb54d79f-489sx   1/1     Running   0          8s
+ashu-app-testing-59bb54d79f-g62rx   1/1     Running   0          8s
+ashu-app-testing-59bb54d79f-kkpz9   1/1     Running   0          7m5s
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ 
+```
+
+### creating loadbalancer or nodeport type service (we are not using ingress)
+
+```
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ kubectl  get deploy 
+NAME               READY   UP-TO-DATE   AVAILABLE   AGE
+ashu-app-testing   3/3     3            3           10m
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ kubectl  expose deploy  ashu-app-testing  --type LoadBalancer --port 80 --name ashulb9  --dry-run=client -o yaml  >lbupdate.yaml 
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ kubectl apply -f lbupdate.yaml 
+service/ashulb9 created
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ kubectl  get  svc
+NAME      TYPE           CLUSTER-IP       EXTERNAL-IP   PORT(S)        AGE
+ashulb9   LoadBalancer   10.105.166.228   <pending>     80:30230/TCP   3s
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ 
+
+
+```
+
+### updating new image with new source in existing deployment 
+
+```
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ kubectl  set image  deployment  ashu-app-testing  cloud4cweb=docker.io/dockerashu/cloud4cweb:appv2 
+deployment.apps/ashu-app-testing image updated
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ 
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ kubectl  get  deploy 
+NAME               READY   UP-TO-DATE   AVAILABLE   AGE
+ashu-app-testing   3/3     3            3           23m
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ kubectl   get  po
+NAME                               READY   STATUS    RESTARTS   AGE
+ashu-app-testing-dd8977d78-pmrgh   1/1     Running   0          7s
+ashu-app-testing-dd8977d78-sjlv8   1/1     Running   0          13s
+ashu-app-testing-dd8977d78-z584g   1/1     Running   0          18s
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ kubectl  get  rs
+NAME                          DESIRED   CURRENT   READY   AGE
+ashu-app-testing-59bb54d79f   0         0         0       24m
+ashu-app-testing-dd8977d78    3         3         3       55s
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ 
+```
 
 
