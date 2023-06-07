@@ -45,6 +45,41 @@ ashu-app-route-rule   nginx   hello.ashutoshh.in   172.31.0.78   80      23h
 ingress.networking.k8s.io "ashu-app-route-rule" deleted
 [ec2-user@ip-172-31-35-0 ashu-codes]$ 
 ```
+### lets deploy webapp version 1 using deployment controller 
+
+```
+[ec2-user@ip-172-31-35-0 ashu-codes]$ ls
+business-webapp  html-sample-app  java  java-webapp  k8s-app-deployment  mysql  python
+[ec2-user@ip-172-31-35-0 ashu-codes]$ cd k8s-app-deployment/
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ ls
+ashu-ingress-routing-rule.yaml  azure_secret.yaml      javaweb_deploy.yaml  nodeport.yaml
+ashupod_auto.yaml               cloudapp_pod.yaml      logs.txt             svcbyrc.yaml
+ashupod.json                    day10deploy.yaml       mytask.yaml          task1.yaml
+```
+
+### creating yaml 
+
+```
+ kubectl  create  deployment ashu-app-testing --image=docker.io/dockerashu/cloud4cweb:appv1   --port 80 --dry-run=client -o yaml  >newapp.yaml 
+```
+
+### deploy it 
+
+```
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ kubectl  apply -f newapp.yaml 
+deployment.apps/ashu-app-testing created
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ kubectl  get  deploy
+NAME               READY   UP-TO-DATE   AVAILABLE   AGE
+ashu-app-testing   0/1     1            0           5s
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ kubectl  get  rs
+NAME                          DESIRED   CURRENT   READY   AGE
+ashu-app-testing-59bb54d79f   1         1         1       8s
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ kubectl  get  po
+NAME                                READY   STATUS    RESTARTS   AGE
+ashu-app-testing-59bb54d79f-kkpz9   1/1     Running   0          11s
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ 
+```
+
 
 
 
