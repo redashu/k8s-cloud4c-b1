@@ -155,4 +155,46 @@ ashu-app-testing-dd8977d78    3         3         3       55s
 [ec2-user@ip-172-31-35-0 k8s-app-deployment]$ 
 ```
 
+### rollback to previous version 
+
+### we can use set image command or rollout also 
+
+## using rollout to rollback 
+
+### checking revision history 
+
+```
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ kubectl  rollout history deployment ashu-app-testing
+deployment.apps/ashu-app-testing 
+REVISION  CHANGE-CAUSE
+1         <none>
+2         <none>
+```
+
+### checking deployment for current revision number 
+
+```
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ kubectl  describe deploy  ashu-app-testing 
+Name:                   ashu-app-testing
+Namespace:              ashu-app
+CreationTimestamp:      Wed, 07 Jun 2023 04:16:15 +0000
+Labels:                 app=ashu-app-testing
+Annotations:            deployment.kubernetes.io/revision: 2
+```
+
+### rollback to remaining revision number 
+
+```
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ kubectl  rollout undo  deployment ashu-app-testing --to-revision=1
+deployment.apps/ashu-app-testing rolled back
+```
+
+### check status of rollback 
+
+```
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ kubectl  rollout status   deployment ashu-app-testing 
+deployment "ashu-app-testing" successfully rolled out
+```
+
+
 
