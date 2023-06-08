@@ -215,5 +215,48 @@ ashu-webapp   Deployment/ashu-webapp   <unknown>/80%   2         15        0    
 
 ```
 
+### creating service for accessing web app
+
+```
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ kubectl   get  deploy 
+NAME          READY   UP-TO-DATE   AVAILABLE   AGE
+ashu-webapp   2/2     2            2           13m
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ kubectl expose deployment ashu-webapp --type NodePort --port 80 --name accesslb --dry-run=client -o yaml >svcday14.yaml 
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ kubectl  apply -f svcday14.yaml 
+service/accesslb created
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ kubectl  get  svc
+NAME       TYPE       CLUSTER-IP      EXTERNAL-IP   PORT(S)        AGE
+accesslb   NodePort   10.111.138.44   <none>        80:31377/TCP   3s
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ 
+
+```
+### attacking to service using pod 
+
+```
+ kubectl  run attack   --image=busybox  --command sleep 10000
+[ec2-user@ip-172-31-35-0 ashu-codes]$ kubectl  get po
+NAME                       READY   STATUS    RESTARTS   AGE
+ashu-webapp-7748cd-8bncl   1/1     Running   0          15m
+ashu-webapp-7748cd-chp4h   1/1     Running   0          24m
+attack                     1/1     Running   0          89s
+[ec2-user@ip-172-31-35-0 ashu-codes]$ 
+[ec2-user@ip-172-31-35-0 ashu-codes]$ kubectl  get svc
+NAME       TYPE       CLUSTER-IP      EXTERNAL-IP   PORT(S)        AGE
+accesslb   NodePort   10.111.138.44   <none>        80:31377/TCP   10m
+[ec2-user@ip-172-31-35-0 ashu-codes]$ 
+[ec2-user@ip-172-31-35-0 ashu-codes]$ 
+[ec2-user@ip-172-31-35-0 ashu-codes]$ kubectl  exec -it  attack -- sh 
+/ # 
+/ # while [ true ]
+> do
+> wget -O attack.html http://accesslb  
+> sleep 0.001 
+> done 
+
+```
+
+
+
+
 
 
