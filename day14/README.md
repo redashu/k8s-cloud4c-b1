@@ -181,4 +181,39 @@ ashu-webapp-7748cd-chp4h   1/1     Running   0          12s
 [ec2-user@ip-172-31-35-0 k8s-app-deployment]$ 
 ```
 
+### checking resources consumption 
+
+```
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ kubectl  get  deploy 
+NAME          READY   UP-TO-DATE   AVAILABLE   AGE
+ashu-webapp   1/1     1            1           5m17s
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ kubectl   get  po 
+NAME                       READY   STATUS    RESTARTS   AGE
+ashu-webapp-7748cd-chp4h   1/1     Running   0          5m20s
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ 
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ kubectl  top pod ashu-webapp-7748cd-chp4h 
+NAME                       CPU(cores)   MEMORY(bytes)   
+ashu-webapp-7748cd-chp4h   0m           2Mi             
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ 
+```
+
+### creating HPA 
+
+```
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ kubectl  get  deploy 
+NAME          READY   UP-TO-DATE   AVAILABLE   AGE
+ashu-webapp   1/1     1            1           8m34s
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ 
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ 
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ kubectl  autoscale  deployment  ashu-webapp --min 2 --max 15 --cpu-percent  80 --dry-run=client -o yaml  >hpa.yaml 
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ kubectl apply -f hpa.yaml 
+horizontalpodautoscaler.autoscaling/ashu-webapp created
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ kubectl  get hpa
+NAME          REFERENCE                TARGETS         MINPODS   MAXPODS   REPLICAS   AGE
+ashu-webapp   Deployment/ashu-webapp   <unknown>/80%   2         15        0          2s
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ 
+
+```
+
+
 
