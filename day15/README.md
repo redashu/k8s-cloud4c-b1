@@ -245,4 +245,13 @@ command terminated with exit code 127
 [ec2-user@ip-172-31-35-0 k8s-app-deployment]$ 
 ```
 
+### Creating Database instance in k8s 
+
+<img src="db.png">
+
+## Introducing Helm 
+
+<img src="helm.png">
+
+
 
