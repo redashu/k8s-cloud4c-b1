@@ -123,5 +123,126 @@ ashupod1   1/1     Running   0          81s
 ### lets check it 
 
 ```
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ kubectl  get  po
+NAME       READY   STATUS    RESTARTS   AGE
+ashupod1   1/1     Running   0          81s
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ 
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ kubectl  exec -it  ashupod1  -- sh 
+/ # 
+/ # 
+/ # ls
+bin    dev    etc    home   lib    media  mnt    opt    proc   root   run    sbin   srv    sys    tmp    usr    var
+/ # cd  /mnt/
+/mnt # ls
+file.txt
+/mnt # cat -n file.txt 
+     1  Hello world
+     2  Hello world
+     3  Hello world
+```
+
+### testing it by delete and creating pod 
 
 ```
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ kubectl   get  pods
+NAME       READY   STATUS    RESTARTS   AGE
+ashupod1   1/1     Running   0          7m54s
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ kubectl  delete pod ashupod1 
+pod "ashupod1" deleted
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ kubectl  get pods
+No resources found in ashu-app namespace.
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ kubectl  apply -f podvolume1.yaml 
+pod/ashupod1 created
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ kubectl  get po
+NAME       READY   STATUS    RESTARTS   AGE
+ashupod1   1/1     Running   0          3s
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ kubectl  exec -it  ashupod1  -- sh 
+/ # cd /mnt/
+/mnt # cat -n file.txt 
+     1  Hello world
+/mnt # cat -n file.txt 
+     1  Hello world
+     2  Hello world
+/mnt # exit
+```
+
+## creating volume of hostPath type
+
+<img src="hostpath.png">
+
+### yaml of pod with volume creation and volume mounting 
+
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels: # labels of pod 
+    run: ashupod1
+  name: ashupod1 # name of pod
+spec:
+  nodeName: ip-172-31-8-58.ap-south-1.compute.internal  # static scheduling
+  volumes: # to create volumes using supported type 
+  - name: ashu-vol1 
+    hostPath: # type of volume 
+      path: /ashudata # location in the minion from where we are taking storage
+      type: DirectoryOrCreate # if above location is not present then create it
+  containers: # to create one or more containers 
+  - image: alpine
+    name: ashupod1
+    command: ["/bin/sh","-c","while true;do echo Hello world >>/mnt/file.txt ; sleep 10;done"]
+    resources: {}
+    volumeMounts: # attaching storage
+    - name: ashu-vol1
+      mountPath: /mnt/  # location inside container to attache
+  dnsPolicy: ClusterFirst
+  restartPolicy: Always
+status: {}
+
+```
+
+### lets try it 
+
+```
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ kubectl  apply -f podvolume1.yaml 
+pod/ashupod1 created
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ kubectl  get  pods
+NAME       READY   STATUS    RESTARTS   AGE
+ashupod1   1/1     Running   0          3s
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ kubectl  exec -it ashupod1 -- sh 
+/ # cd /mnt/
+/mnt # cat -n file.txt 
+     1  Hello world
+     2  Hello world
+/mnt # cat -n file.txt 
+     1  Hello world
+     2  Hello world
+/mnt # cat -n file.txt 
+     1  Hello world
+     2  Hello world
+     3  Hello world
+/mnt # exit
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ kubectl  delete pod ashupod1 
+pod "ashupod1" deleted
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ kubectl  apply -f podvolume1.yaml 
+pod/ashupod1 created
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ kubectl  exec -it ashupod1 -- sh 
+error: unable to upgrade connection: container not found ("ashupod1")
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ kubectl  exec -it ashupod1 -- sh 
+/ # cd /mnt/
+/mnt # cat -n file.txt 
+     1  Hello world
+     2  Hello world
+     3  Hello world
+     4  Hello world
+     5  Hello world
+     6  Hello world
+     7  Hello world
+/mnt # ecxit
+sh: ecxit: not found
+/mnt # exit
+command terminated with exit code 127
+[ec2-user@ip-172-31-35-0 k8s-app-deployment]$ 
+```
+
+
