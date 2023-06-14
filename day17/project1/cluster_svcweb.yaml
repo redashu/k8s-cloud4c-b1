@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  labels:
+    app: ashu-ui-lb2
+  name: ashu-ui-lb2
+  namespace: ashu-project1
+spec:
+  ports:
+  - name: 8080-8080
+    port: 8080
+    protocol: TCP
+    targetPort: 8080
+  selector: # pod finder using pod label 
+    app: ashu-web
+  type: ClusterIP
+status:
+  loadBalancer: {}

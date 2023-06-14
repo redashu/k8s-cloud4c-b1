@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: ashu-web
+  name: ashu-web
+  namespace: ashu-project1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ashu-web
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels: # label of pod 
+        app: ashu-web
+    spec:
+      containers:
+      - image: adminer
+        name: adminer
+        ports:
+        - containerPort: 8080
+        resources: {}
+status: {}

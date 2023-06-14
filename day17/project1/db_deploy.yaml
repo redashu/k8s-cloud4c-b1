@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: ashu-mysqldb
+  name: ashu-mysqldb
+  namespace: ashu-project1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ashu-mysqldb
+  strategy: {}
+  template: # for creating pod 
+    metadata:
+      creationTimestamp: null
+      labels: # label of pod 
+        app: ashu-mysqldb
+    spec:
+      volumes: 
+      - name: ashudb-vol1
+        hostPath:
+          path: /ashu-project1
+          type: DirectoryOrCreate 
+      containers:
+      - image: mysql
+        name: mysql
+        ports:
+        - containerPort: 3306
+        resources: {}
+        env: 
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: db-details
+              key: mypass
+        volumeMounts:
+        - name: ashudb-vol1
+          mountPath: /var/lib/mysql/
+status: {}

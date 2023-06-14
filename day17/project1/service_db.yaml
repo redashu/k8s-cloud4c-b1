@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  labels:
+    app: ashu-db-lb
+  name: ashu-db-lb
+  namespace: ashu-project1
+spec:
+  ports:
+  - name: 3306-3306
+    port: 3306
+    protocol: TCP
+    targetPort: 3306
+  selector: # to find pod using label of pod 
+    app: ashu-mysqldb # exactly label of pod 
+  type: ClusterIP
+status:
+  loadBalancer: {}
