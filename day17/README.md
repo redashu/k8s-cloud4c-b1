@@ -94,4 +94,45 @@ exit
 ```
 
 
+### performing history 
+
+```
+ 640  kubectl  create  ns  ashu-project1 --dry-run=client -o yaml  >ns.yaml 
+  641  kubectl  create  deployment  ashu-mysqldb --image=mysql --port 3306  --namespace ashu-project1    --dry-run=client -o yaml 
+  642  kubectl  create  deployment  ashu-mysqldb --image=mysql --port 3306  --namespace ashu-project1    --dry-run=client -o yaml  >db_deploy.yaml 
+  643  history 
+  644  kubectl  create  secret 
+  645  kubectl  create  secret generic   db-details --from-literal  mypass="Db@098#" --namespace ashu-project1  --dry-run=client -o yaml >secret.yaml 
+  646  ls
+  647  history 
+  648  kubectl  get  deploy 
+  649  kubectl  create service
+  650  kubectl  create service  clusterip ashu-db-lb --tcp 3306:3306  --namespace ashu-project   --dry-run=client -o yaml  >service_db.yaml 
+  651  ls
+  652  kubectl   apply -f  . 
+  653  kubectl  get  ns | grep ashu
+  654  kubectl  -n ashu-project1   get  secret 
+  655  kubectl  -n ashu-project1   get  svc
+  656  kubectl  -n ashu-project1   get  deploy 
+  657  kubectl  -n ashu-project1   get  po 
+  658  history 
+  659  kubectl  -n ashu-project1 get pod
+  660  kubectl  -n ashu-project1  exec -it ashu-mysqldb-569dcb97cf-9fctl -- bash 
+  661  ls
+  662  kubectl  create deployment ashu-web --image=adminer --port 8080 --namespace ashu-project1 --dry-run=client -o yaml >webapp_deploy.yaml 
+  663  kubectl  create  service nodeport ashu-ui-lb --tcp 8080:8080 --namespace ashu-project1 --dry-run=client -o yaml >nodeport_svc.yaml 
+  664  kubectl  apply -f . 
+  665  kubectl  -n ashu-project1  get deploy 
+  666  kubectl  -n ashu-project1  get svc
+  667  kubectl  -n ashu-project1  get secret
+  668  history 
+  669  Db@098# 
+  670  kubectl  create  service clusterip ashu-ui-lb2 --tcp 8080:8080 --namespace ashu-project1 --dry-run=client -o yaml >cluster_svcweb.yaml 
+  671  history 
+  672  kubectl  apply -f . 
+  673  kubectl  -n ashu-project1 get  svc
+  674  kubectl  -n ashu-project1 get  ingress
+  675  ls
+```
+
 
