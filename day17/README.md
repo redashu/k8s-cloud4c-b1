@@ -135,4 +135,9 @@ exit
   675  ls
 ```
 
+### DNs role internal to the k8s cluster 
+
+<img src="dns.png">
+
+
 
