@@ -189,7 +189,7 @@ spec:
       volumes:
       - name: ashu-db-vol2
         persistentVolumeClaim: # we are calling pvc 
-          cliamName: ashu-pvc # name of pvc 
+          claimName: ashu-pvc # name of pvc 
       containers:
       - image: mysql:5.6
         name: mysql
@@ -206,5 +206,21 @@ spec:
               name: ashu-wordpress-pass
               key: mypass1 
 status: {}
+
+
+```
+
+### creating db deploy 
+
+```
+[ec2-user@ip-172-31-35-0 ashu-wordpress]$ kubectl apply -f db.yaml 
+deployment.apps/ashu-db created
+[ec2-user@ip-172-31-35-0 ashu-wordpress]$ kubectl  get  deploy 
+NAME      READY   UP-TO-DATE   AVAILABLE   AGE
+ashu-db   1/1     1            1           36s
+[ec2-user@ip-172-31-35-0 ashu-wordpress]$ kubectl  get  po 
+NAME                       READY   STATUS    RESTARTS   AGE
+ashu-db-6fcc8f7f94-d9v4m   1/1     Running   0          38s
+[ec2-user@ip-172-31-35-0 ashu-wordpress]$ 
 
 ```
