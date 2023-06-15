@@ -4,7 +4,7 @@
 
 ## project 2 ENV understanding 
 
-<img src="evn.png">
+<img src="env.png">
 
 ## checking do we have Ingress deployed 
 
