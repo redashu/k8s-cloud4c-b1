@@ -73,5 +73,37 @@ volume-by-ashu   3Gi        RWO            Retain           Available           
 [ec2-user@ip-172-31-35-0 ashu-wordpress]$ 
 ```
 
+### claiming pv by creating PVC inside namespace 
+
+```
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: ashu-pvc
+spec:
+  storageClassName: manual 
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 7Gi 
+```
+
+### create 
+
+```
+[ec2-user@ip-172-31-35-0 ashu-wordpress]$ kubectl apply -f pvc.yaml 
+persistentvolumeclaim/ashu-pvc created
+[ec2-user@ip-172-31-35-0 ashu-wordpress]$ kubectl  get  pvc
+NAME       STATUS   VOLUME            CAPACITY   ACCESS MODES   STORAGECLASS   AGE
+ashu-pvc   Bound    vloume-by-umend   7Gi        RWO            manual         4s
+[ec2-user@ip-172-31-35-0 ashu-wordpress]$ kubectl  get  pv
+NAME                 CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS      CLAIM               STORAGECLASS   REASON   AGE
+shreyas-pv           3Gi        RWO            Retain           Available                       manual                  11m
+vloume-by-umend      7Gi        RWO            Retain           Bound       ashu-app/ashu-pvc   manual                  13m
+volume-by-ashu       3Gi        RWO            Retain           Available                       manual                  16m
+volume-by-gaurav     4Gi        RWO          
+```
+
 
 
