@@ -105,5 +105,106 @@ volume-by-ashu       3Gi        RWO            Retain           Available       
 volume-by-gaurav     4Gi        RWO          
 ```
 
+### Now create secret for mysql root password 
 
+```
+[ec2-user@ip-172-31-35-0 ashu-wordpress]$ kubectl create secret generic  ashu-wordpress-pass --from-literal  mypass1="DbWord@1234
+5"   --dry-run=client -o yaml >secret.yaml 
+[ec2-user@ip-172-31-35-0 ashu-wordpress]$ ls
+pvc.yaml  pv.yaml  secret.yaml
+[ec2-user@ip-172-31-35-0 ashu-wordpress]$ kubectl apply -f secret.yaml 
+secret/ashu-wordpress-pass created
+[ec2-user@ip-172-31-35-0 ashu-wordpress]$ kubectl  get secret
+NAME                  TYPE     DATA   AGE
+ashu-db-password      Opaque   1      2d
+ashu-wordpress-pass   Opaque   1      3s
+```
 
+### database deployment 
+
+```
+[ec2-user@ip-172-31-35-0 ashu-wordpress]$ kubectl  create deployment ashu-db --image=mysql:5.6 --port 3306 --dry-run=client -o yaml >db.yaml 
+```
+
+### updating secret in db yaml 
+
+```
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: ashu-db
+  name: ashu-db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ashu-db
+  strategy: {}
+  template: # pod section 
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: ashu-db
+    spec:
+      containers:
+      - image: mysql:5.6
+        name: mysql
+        ports:
+        - containerPort: 3306
+        resources: {}
+        env:  # calling secret to fetch mysqlroot password from secret 
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: ashu-wordpress-pass
+              key: mypass1 
+status: {}
+
+```
+
+### updating volume using PVC 
+
+```
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: ashu-db
+  name: ashu-db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ashu-db
+  strategy: {}
+  template: # pod section 
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: ashu-db
+    spec:
+      volumes:
+      - name: ashu-db-vol2
+        persistentVolumeClaim: # we are calling pvc 
+          cliamName: ashu-pvc # name of pvc 
+      containers:
+      - image: mysql:5.6
+        name: mysql
+        ports:
+        - containerPort: 3306
+        resources: {}
+        volumeMounts:
+        - name: ashu-db-vol2
+          mountPath: /var/lib/mysql/
+        env:  # calling secret to fetch mysqlroot password from secret 
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: ashu-wordpress-pass
+              key: mypass1 
+status: {}
+
+```
