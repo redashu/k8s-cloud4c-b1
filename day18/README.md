@@ -224,3 +224,44 @@ ashu-db-6fcc8f7f94-d9v4m   1/1     Running   0          38s
 [ec2-user@ip-172-31-35-0 ashu-wordpress]$ 
 
 ```
+
+### RBAC understanding for real world 
+
+<img src="role.png">
+
+### User understanding 
+
+<img src="u.png">
+
+### checking existing sa
+
+```
+[ec2-user@ip-172-31-35-0 ashu-wordpress]$ kubectl config get-contexts 
+CURRENT   NAME                          CLUSTER      AUTHINFO           NAMESPACE
+*         kubernetes-admin@kubernetes   kubernetes   kubernetes-admin   ashu-app
+          mytasks                       kubernetes                      tasks
+[ec2-user@ip-172-31-35-0 ashu-wordpress]$ kubectl  get  serviceaccounts 
+NAME      SECRETS   AGE
+default   0         17d
+[ec2-user@ip-172-31-35-0 ashu-wordpress]$ 
+
+```
+
+### creating custom serviceaccount 
+
+```
+[ec2-user@ip-172-31-35-0 ashu-wordpress]$ kubectl  get  serviceaccounts 
+NAME      SECRETS   AGE
+default   0         17d
+[ec2-user@ip-172-31-35-0 ashu-wordpress]$ kubectl  get  serviceaccounts 
+NAME      SECRETS   AGE
+default   0         17d
+[ec2-user@ip-172-31-35-0 ashu-wordpress]$ kubectl create serviceaccount ashu
+serviceaccount/ashu created
+[ec2-user@ip-172-31-35-0 ashu-wordpress]$ kubectl  get  serviceaccounts 
+NAME      SECRETS   AGE
+ashu      0         1s
+default   0         17d
+[ec2-user@ip-172-31-35-0 ashu-wordpress]$ 
+```
+
