@@ -197,3 +197,17 @@ spec:
 status: {}
 
 ```
+
+## lets deploy it 
+
+```
+[ec2-user@ip-172-31-35-0 ashu-wordpress]$ kubectl  apply -f wordpress.yaml 
+deployment.apps/ashu-wordpress created
+[ec2-user@ip-172-31-35-0 ashu-wordpress]$ kubectl  get  deploy 
+NAME             READY   UP-TO-DATE   AVAILABLE   AGE
+ashu-db          1/1     1            1           23h
+ashu-wordpress   0/1     1            0           3s
+[ec2-user@ip-172-31-35-0 ashu-wordpress]$ 
+
+```
+
