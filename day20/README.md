@@ -230,3 +230,65 @@ ashu-web-lb   NodePort    10.97.135.66    <none>        80:30221/TCP   2s
 
 
 ```
+
+### To implement ingress we are delete nodeport and creating clusterip
+
+
+```
+[ec2-user@ip-172-31-35-0 ashu-wordpress]$ kubectl  get  svc
+NAME          TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)        AGE
+ashu-db-lb    ClusterIP   10.108.69.190   <none>        3306/TCP       41m
+ashu-web-lb   NodePort    10.97.135.66    <none>        80:30221/TCP   12m
+[ec2-user@ip-172-31-35-0 ashu-wordpress]$ kubectl  delete svc  ashu-web-lb 
+service "ashu-web-lb" deleted
+[ec2-user@ip-172-31-35-0 ashu-wordpress]$ kubectl  get  svc
+NAME         TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)    AGE
+ashu-db-lb   ClusterIP   10.108.69.190   <none>        3306/TCP   42m
+[ec2-user@ip-172-31-35-0 ashu-wordpress]$ kubectl  get deploy
+NAME             READY   UP-TO-DATE   AVAILABLE   AGE
+ashu-db          1/1     1            1           23h
+ashu-wordpress   1/1     1            1           25m
+[ec2-user@ip-172-31-35-0 ashu-wordpress]$ kubectl  expose  deployment ashu-wordpress --type  ClusterIP --port 80 --name ashu-lbnew  --dry-run=client -o yaml >websvc.yaml
+[ec2-user@ip-172-31-35-0 ashu-wordpress]$ kubectl  apply -f websvc.yaml 
+service/ashu-lbnew created
+[ec2-user@ip-172-31-35-0 ashu-wordpress]$ kubectl  get  svc
+NAME         TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)    AGE
+ashu-db-lb   ClusterIP   10.108.69.190   <none>        3306/TCP   42m
+ashu-lbnew   ClusterIP   10.110.4.19     <none>        80/TCP     3s
+```
+
+### creating ingress routing rule for web 
+
+```
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ashu-app-route-rule # name of my routing rule 
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  ingressClassName: nginx # name of class 
+  rules: # lets write rule here 
+  - host: project2.ashutoshh.in # capture traffice for this domain URL 
+    http:
+      paths:
+      - path: /  # app path inside container (default location)
+        pathType: Prefix
+        backend:
+          service:
+            name: ashu-lbnew
+            port:
+              number: 80
+```
+
+### depoy it
+
+```
+[ec2-user@ip-172-31-35-0 ashu-wordpress]$ kubectl  apply -f ingress_wp.yaml 
+ingress.networking.k8s.io/ashu-app-route-rule created
+[ec2-user@ip-172-31-35-0 ashu-wordpress]$ kubectl  get  ingress
+NAME                  CLASS   HOSTS                   ADDRESS   PORTS   AGE
+ashu-app-route-rule   nginx   project2.ashutoshh.in             80      5s
+[ec2-user@ip-172-31-35-0 ashu-wordpress]$ 
+
+```
