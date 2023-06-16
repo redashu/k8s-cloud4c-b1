@@ -87,3 +87,113 @@ exit
 [ec2-user@ip-172-31-35-0 ashu-codes]$ 
 ```
 
+### creating clusterIP service for db 
+
+```
+[ec2-user@ip-172-31-35-0 ashu-codes]$ ls
+ashu-wordpress  business-webapp  html-sample-app  java  java-webapp  k8s-app-deployment  mysql  project1  python
+[ec2-user@ip-172-31-35-0 ashu-codes]$ cd ashu-wordpress/
+[ec2-user@ip-172-31-35-0 ashu-wordpress]$ ls
+db.yaml  pv1.yaml  pvc.yaml  pv.yaml  secret.yaml
+[ec2-user@ip-172-31-35-0 ashu-wordpress]$ kubectl  get  deploy
+NAME      READY   UP-TO-DATE   AVAILABLE   AGE
+ashu-db   1/1     1            1           23h
+[ec2-user@ip-172-31-35-0 ashu-wordpress]$ kubectl  expose deployment ashu-db --type ClusterIP --port 3306 --name ashu-db-lb --dry-run=client -oyaml >dbsvc.yaml 
+[ec2-user@ip-172-31-35-0 ashu-wordpress]$ kubectl  apply -f dbsvc.yaml 
+service/ashu-db-lb created
+[ec2-user@ip-172-31-35-0 ashu-wordpress]$ kubectl  get  svc
+NAME         TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)    AGE
+ashu-db-lb   ClusterIP   10.108.69.190   <none>        3306/TCP   2s
+[ec2-user@ip-172-31-35-0 ashu-wordpress]$ 
+
+
+```
+
+### Now creating wordpress framework deployment yaml
+
+```
+kubectl  create  deployment  ashu-wordpress --image=wordpress:4.8-apache  --port 80 --dry-run=client -o yaml >wordpress.yaml 
+```
+
+### updating secret so that wordpress can connect database 
+
+```
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: ashu-wordpress
+  name: ashu-wordpress
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ashu-wordpress
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: ashu-wordpress
+    spec:
+      containers:
+      - image: wordpress:4.8-apache
+        name: wordpress
+        ports:
+        - containerPort: 80
+        resources: {}
+        env: # for connecting to DB 
+        - name: WORDPRESS_DB_HOST
+          value: ashu-db-lb # service name of database deployment 
+        - name: WORDPRESS_DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: ashu-wordpress-pass
+              key: mypass1
+status: {}
+
+```
+
+### optionally you can update resource restriction in wordpress pod 
+
+```
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: ashu-wordpress
+  name: ashu-wordpress
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ashu-wordpress
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: ashu-wordpress
+    spec:
+      containers:
+      - image: wordpress:4.8-apache
+        name: wordpress
+        ports:
+        - containerPort: 80
+        resources:
+          limist: # max it can go & it is required for implementing HPA 
+            memory: 3Gi 
+            cpu: 500m 
+        env: # for connecting to DB 
+        - name: WORDPRESS_DB_HOST
+          value: ashu-db-lb # service name of database deployment 
+        - name: WORDPRESS_DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: ashu-wordpress-pass
+              key: mypass1
+status: {}
+
+```
