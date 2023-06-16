@@ -211,3 +211,22 @@ ashu-wordpress   0/1     1            0           3s
 
 ```
 
+### creating nodeport service for web wordpress
+
+```
+[ec2-user@ip-172-31-35-0 ashu-wordpress]$ kubectl  get  deploy
+NAME             READY   UP-TO-DATE   AVAILABLE   AGE
+ashu-db          1/1     1            1           23h
+ashu-wordpress   1/1     1            1           12m
+[ec2-user@ip-172-31-35-0 ashu-wordpress]$ 
+[ec2-user@ip-172-31-35-0 ashu-wordpress]$ kubectl  expose deployment ashu-wordpress --type NodePort --port 80 --name ashu-web-lb  --dry-run=client -o yaml  >nodeport.yaml 
+[ec2-user@ip-172-31-35-0 ashu-wordpress]$ kubectl  apply -f nodeport.yaml 
+service/ashu-web-lb created
+[ec2-user@ip-172-31-35-0 ashu-wordpress]$ kubectl  get  svc
+NAME          TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)        AGE
+ashu-db-lb    ClusterIP   10.108.69.190   <none>        3306/TCP       29m
+ashu-web-lb   NodePort    10.97.135.66    <none>        80:30221/TCP   2s
+[ec2-user@ip-172-31-35-0 ashu-wordpress]$ 
+
+
+```
